@@ -1,0 +1,67 @@
+﻿@model ProductVM
+@{
+
+    ViewBag.PageTitle = "Product Management";
+    ViewBag.CardTitle = "Edit Product";
+  
+}
+
+
+
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Product.Id" />
+            <input type="hidden" asp-for="Product.Img" />
+
+            <div class="mb-3 row p-1">
+                <label asp-for="Product.Name" class="p-0"></label>
+                <input asp-for="Product.Name" class="form-control" />
+                <span asp-validation-for="Product.Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3 row p-1">
+                <label asp-for="Product.Description" class="p-0"></label>
+                <input asp-for="Product.Description" class="form-control" />
+                <span asp-validation-for="Product.Description" class="text-danger"></span>
+            </div>
+            <div class="mb-3 row p-1">
+                <label asp-for="Product.Price" class="p-0"></label>
+                <input asp-for="Product.Price" class="form-control" />
+                <span asp-validation-for="Product.Price" class="text-danger"></span>
+            </div>
+            <div class="mb-3 row p-1">
+                <label asp-for="Product.Img" class="p-0"></label>
+                <input type="file" name="file" id="imgfile" class="form-control" />
+            </div>
+            <div class="mb-3 row p-1">
+                <label asp-for="Product.CategoryId" class="p-0"></label>
+                <select asp-for="Product.CategoryId" asp-items="Model.CategoryList" class="form-control">
+                    <option disabled selected>-- Select Category --</option>
+                </select>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <button type="submit" class="btn btn-primary form-control">Save</button>
+                </div>
+                <div class="col-6">
+                    <a asp-action="Index" class="btn btn-secondary border form-control">Back to List</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-4 text-center">
+        
+        <div class="container">
+            <img id="image-preview" src="~/@Model.Product.Img"  width="300" height="300"/>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
