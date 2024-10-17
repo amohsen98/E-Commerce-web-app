@@ -1,5 +1,5 @@
 ﻿using E_Commerce.Data;
-using E_Commerce.ViewModels;
+using E_Commerce.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
