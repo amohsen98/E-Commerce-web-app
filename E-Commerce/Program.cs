@@ -22,11 +22,13 @@ namespace E_Commerce
             //builder.Services.AddSession(s => s.IdleTimeout = TimeSpan.FromMinutes(1));
             //Register Database Connection
             builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(
-                builder.Configuration.GetConnectionString("DefaultConnection")));
+                builder.Configuration.GetConnectionString("DefaultConnection"))
+            .EnableSensitiveDataLogging() // Enable this for SQL logging
+           .LogTo(Console.WriteLine)); // This will log SQL to the console
 
             builder.Services.AddIdentity<IdentityUser, IdentityRole>(
-                options=>options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(4))
-
+                options=>options.Lockout.DefaultLockoutTimeSpan  = TimeSpan.FromDays(4))
+                .AddDefaultUI()
                 .AddDefaultTokenProviders().AddDefaultUI()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -56,17 +58,19 @@ namespace E_Commerce
             app.MapRazorPages();
 
             //app.MapControllerRoute(
-              //  name: "default",
-                //pattern: "{controller=Home}/{action=Index}/{id?}");
+            //  name: "default",
+            //pattern: "{controller=Home}/{action=Index}/{id?}");
 
-            
-                app.MapControllerRoute(
-                  name: "Admin",
-                  pattern: "{Area=Admin}/{controller=Home}/{action=Index}/{id?}" );
+           
+
             app.MapControllerRoute(
                   name: "default",
-                  pattern: "{Area=Customer}/{controller=Home}/{action=Index}/{id?}");
-
+                  pattern: "{Area=Admin}/{controller=Home}/{action=Index}/{id?}" );
+            app.MapControllerRoute(
+                 name: "Customer",
+                 pattern: "{Area=Customer}/{controller=Home}/{action=Index}/{id?}");
+           
+    
 
             app.Run();
         }
