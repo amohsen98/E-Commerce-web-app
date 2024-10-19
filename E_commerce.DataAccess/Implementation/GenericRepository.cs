@@ -60,13 +60,10 @@ namespace E_commerce.DataAccess.Implementation
                     query = query.Include(item);
                 }
             }
-            return query.SingleOrDefault();
+            return query.FirstOrDefault();
         }
 
-        public T Getfirstorfefault(Expression<Func<T, bool>> predicate, string? Includeword)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public void Remove(T entity)
         {

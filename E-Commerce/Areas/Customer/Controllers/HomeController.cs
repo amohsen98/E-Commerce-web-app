@@ -51,11 +51,24 @@ namespace E_Commerce.Areas.Customer.Controllers
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
             shoppingCart.ApplicationUserId = claim.Value;
 
-            _unitofwork.ShoppingCart.Add(shoppingCart);
-            _unitofwork.Complete(); 
 
-            
-            
+            ShoppingCart Cartobj = _unitofwork.ShoppingCart.GetFirstorDefault(
+                u => u.ApplicationUserId == claim.Value && u.ProductId == shoppingCart.ProductId);
+            if (Cartobj == null)
+            {
+                _unitofwork.ShoppingCart.Add(shoppingCart);
+                _unitofwork.Complete();
+
+            }
+            else
+            {
+                _unitofwork.ShoppingCart.IncreaseCount(Cartobj, shoppingCart.Count);
+                _unitofwork.Complete();
+
+            }
+
+
+
 
 
             return RedirectToAction("Index");
