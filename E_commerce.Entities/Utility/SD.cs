@@ -1,4 +1,4 @@
-﻿namespace E_Commerce.Utility
+﻿namespace E_Commerce.Entities.Utility
 {
     public static class SD
     {

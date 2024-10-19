@@ -1,70 +1,69 @@
-﻿using E_Commerce.Data;
-using E_Commerce.Models;
-using E_Commerce.Utility;
+﻿
+using E_commerce.Entities.Repositories;
+using E_Commerce.DataAccess;
+using E_Commerce.Entites;
+using E_Commerce.Entites.Models;
+using E_Commerce.Entites.Utility;
+using E_Commerce.Entities.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Security.Claims;
 
+
 namespace E_Commerce.Areas.Customer.Controllers
 {
     [Area("Customer")]
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        public HomeController(ApplicationDbContext context)
-        {
-            _context = context;
+        private readonly IUnitOfWork _unitofwork;
 
+        public HomeController(IUnitOfWork unitofwork)
+        {
+            _unitofwork = unitofwork;
         }
-        //Index: home page or default view
         public IActionResult Index()
         {
-            var products = _context.products.ToList();
+
+            var products = _unitofwork.Product.GetAll();
             return View(products);
-
-
-  
+            
         }
 
-        
-        public  IActionResult Details(int ProductId)
+        public IActionResult Details(int ProductId)
         {
-
-
-
-
-            ShoppingCart obj = new()
+            ShoppingCart obj = new ShoppingCart()
             {
                 ProductId = ProductId,
-                Product = _context.products
-                                         .Include(p => p.Category)
-                                         .FirstOrDefault(p => p.Id == ProductId),
+                Product = _unitofwork.Product.GetFirstorDefault(v => v.Id == ProductId, Includeword: "Category"),
                 Count = 1
             };
-
             return View(obj);
         }
 
-        // Open cart page and proceed to payment
-        // Should authorize to make sure that the user is registered on site
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
         public IActionResult Details(ShoppingCart shoppingCart)
         {
-            // Do not set shoppingCart.Id or shoppingCart.Product.Id
             var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var Claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
-            shoppingCart.ApplicationUserId = Claim.Value;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            shoppingCart.ApplicationUserId = claim.Value;
 
-            // Add the shopping cart to the context asynchronously
-            _context.ShoppingCarts.Add(shoppingCart); // Use AddAsync
-             _context.SaveChanges(); // Use SaveChangesAsync
+            _unitofwork.ShoppingCart.Add(shoppingCart);
+            _unitofwork.Complete(); 
+
+            
+            
+
 
             return RedirectToAction("Index");
         }
 
+
     }
 }
+
+
+

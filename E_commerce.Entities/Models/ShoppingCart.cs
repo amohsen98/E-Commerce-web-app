@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace E_Commerce.Models
+namespace E_Commerce.Entites.Models
 {
     public class ShoppingCart
     {
@@ -22,5 +22,9 @@ namespace E_Commerce.Models
         [ForeignKey("ApplicationUserId")]
         [ValidateNever]
         public ApplicationUser ApplicationUser { get; set; }
+       
+        
+
+
     }
 }

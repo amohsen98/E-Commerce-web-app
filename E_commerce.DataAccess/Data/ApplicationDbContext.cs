@@ -1,9 +1,11 @@
-﻿using E_Commerce.Models;
+﻿
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace E_Commerce.Data
+using E_Commerce.Entites.Models;
+
+namespace E_Commerce.DataAccess
 {
     public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {

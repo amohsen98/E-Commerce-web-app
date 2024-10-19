@@ -1,6 +1,9 @@
-using E_Commerce.Data;
-using E_Commerce.Models;
-using E_Commerce.Utility;
+using E_commerce.DataAccess.Implementation;
+using E_commerce.Entities.Repositories;
+using E_Commerce.DataAccess;
+using E_Commerce.Entites.Utility;
+using E_Commerce.Entities;
+using E_Commerce.Entities.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +18,7 @@ namespace E_Commerce
             var builder = WebApplication.CreateBuilder(args);
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("No Connection String was found");
             
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
@@ -25,6 +29,7 @@ namespace E_Commerce
                 builder.Configuration.GetConnectionString("DefaultConnection"))
             .EnableSensitiveDataLogging() // Enable this for SQL logging
            .LogTo(Console.WriteLine)); // This will log SQL to the console
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             builder.Services.AddIdentity<IdentityUser, IdentityRole>(
                 options=>options.Lockout.DefaultLockoutTimeSpan  = TimeSpan.FromDays(4))
