@@ -118,85 +118,83 @@ namespace E_Commerce.Areas.Identity.Pages.Account
         public async Task OnGetAsync(string returnUrl = null)
         {
             //Ensure if Admin role exists
-            if (!_roleManager.RoleExistsAsync(SD.AdminRole).GetAwaiter().GetResult()) {
+            if (!_roleManager.RoleExistsAsync(SD.AdminRole).GetAwaiter().GetResult())
+            {
                 _roleManager.CreateAsync(new IdentityRole(SD.AdminRole)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(SD.EditorRole)).GetAwaiter().GetResult();
-                _roleManager.CreateAsync(new IdentityRole(SD.CustomerRole)).GetAwaiter().GetResult();
+            _roleManager.CreateAsync(new IdentityRole(SD.EditorRole)).GetAwaiter().GetResult();
+            _roleManager.CreateAsync(new IdentityRole(SD.CustomerRole)).GetAwaiter().GetResult();
             }
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
-        {
-            returnUrl ??= Url.Content("~/");
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            if (ModelState.IsValid)
-            {
-                var user = CreateUser();
+		public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+		{
+			returnUrl ??= Url.Content("~/");
+			ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+			if (ModelState.IsValid)
+			{
+				var user = CreateUser();
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);  
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                user.City = Input.City;
-                user.Address = Input.Address;
-                user.Name = Input.Name;
-                var result = await _userManager.CreateAsync(user, Input.Password);
+				await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+				await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+				user.City = Input.City;
+				user.Name = Input.Name;
+				user.Address = Input.Address;
+				var result = await _userManager.CreateAsync(user, Input.Password);
 
-                if (result.Succeeded)
-                {
-
-
-                    _logger.LogInformation("User created a new account with password.");
-                    //want to redirect for users if made users by admin
-                    string role = HttpContext.Request.Form["RoleRadio"].ToString();
-                    if (string.IsNullOrEmpty(role)) {
-
-                        await _userManager.AddToRoleAsync(user, SD.CustomerRole);
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+				if (result.Succeeded)
+				{
+					_logger.LogInformation("User created a new account with password.");
 
 
-                    }
-                    else
-                    {
-                        await _userManager.AddToRoleAsync(user, role);
+					string role = HttpContext.Request.Form["RoleRadio"].ToString();
+
+					if (String.IsNullOrEmpty(role))
+					{
+						await _userManager.AddToRoleAsync(user, SD.CustomerRole);
+						await _signInManager.SignInAsync(user, isPersistent: false);
+						return LocalRedirect(returnUrl);
+					}
+					else
+					{
+						await _userManager.AddToRoleAsync(user, role);
+					}
+					return RedirectToAction("Index", "Users", new { area = "Admin" });
 
 
-                    }
-                    return RedirectToAction ("Index", "Users" , new {area ="Admin"});  
 
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
+					var userId = await _userManager.GetUserIdAsync(user);
+					var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+					code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+					var callbackUrl = Url.Page(
+						"/Account/ConfirmEmail",
+						pageHandler: null,
+						values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+						protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+					await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+						$"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                    }
-                    else
-                    {
-                        
-                    }
-                }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
+					if (_userManager.Options.SignIn.RequireConfirmedAccount)
+					{
+						return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+					}
+					else
+					{
 
-            // If we got this far, something failed, redisplay form
-            return Page();
-        }
+					}
+				}
+				foreach (var error in result.Errors)
+				{
+					ModelState.AddModelError(string.Empty, error.Description);
+				}
+			}
 
-        private ApplicationUser CreateUser()
+			// If we got this far, something failed, redisplay form
+			return Page();
+		}
+		private ApplicationUser CreateUser()
         {
             try
             {

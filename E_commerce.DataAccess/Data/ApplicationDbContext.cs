@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 using E_Commerce.Entites.Models;
+using E_commerce.Entities.Models;
 
 namespace E_Commerce.DataAccess
 {
@@ -17,6 +18,9 @@ namespace E_Commerce.DataAccess
         public DbSet<Product> products { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+
+        public DbSet<OrderHeader> OrderHeaders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; } 
 
     }
 }
