@@ -12,9 +12,10 @@ namespace E_commerce.Entities.Repositories
         IProductRepository Product { get; }
         IShoppingCartRepository ShoppingCart { get; }
 
-        
+		IOrderHeaderRepository OrderHeader { get; }
+		IOrderDetailRepository OrderDetail { get; }
 
-        IApplicationUserRepository ApplicationUser { get; }
+		IApplicationUserRepository ApplicationUser { get; }
         int Complete();
     }
 }
