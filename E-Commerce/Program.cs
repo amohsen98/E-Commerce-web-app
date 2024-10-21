@@ -1,5 +1,6 @@
 using E_commerce.DataAccess.Implementation;
 using E_commerce.Entities.Repositories;
+using E_commerce.Entities.Utility;
 using E_Commerce.DataAccess;
 using E_Commerce.Entites.Utility;
 using E_Commerce.Entities;
@@ -7,6 +8,7 @@ using E_Commerce.Entities.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 
 namespace E_Commerce
@@ -30,6 +32,9 @@ namespace E_Commerce
             .EnableSensitiveDataLogging() // Enable this for SQL logging
            .LogTo(Console.WriteLine)); // This will log SQL to the console
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            builder.Services.Configure<StripeData>(builder.Configuration.GetSection("stripe"));
+
 
             builder.Services.AddIdentity<IdentityUser, IdentityRole>(
                 options=>options.Lockout.DefaultLockoutTimeSpan  = TimeSpan.FromDays(4))
@@ -56,6 +61,9 @@ namespace E_Commerce
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            StripeConfiguration.ApiKey = builder.Configuration.GetSection("stripe:Secretkey").Get<string>();
+
 
             app.UseAuthorization();
             app.UseAuthorization();

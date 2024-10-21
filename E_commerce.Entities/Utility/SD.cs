@@ -6,5 +6,6 @@
         public const string EditorRole = "Editor";
         public const string CustomerRole = "Customer";
 
+
     }
 }
