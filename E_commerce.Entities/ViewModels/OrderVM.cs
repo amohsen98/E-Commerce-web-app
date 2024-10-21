@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace E_commerce.Entities.ViewModels
 {
-    class OrderVM
+    public class OrderVM
     {
         public OrderHeader OrderHeader { get; set; }
 

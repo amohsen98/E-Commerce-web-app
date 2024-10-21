@@ -7,7 +7,7 @@ $(document).ready(function () {
 function loaddata() {
     dtble = $("#mytable").DataTable({
         "ajax": {
-            "url": "/Admin/Order/GetData",
+            "url": "/Admin/Order/GetData", 
             "dataSrc": "data"  // Ensure this is correct, or leave out if default
         },
         "columns": [
