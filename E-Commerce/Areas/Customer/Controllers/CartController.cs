@@ -127,19 +127,19 @@ namespace E_Commerce.Areas.Customer.Controllers
 
             foreach (var item in ShoppingCartVM.CartsList)
             {
-                ShoppingCartVM.OrderHeader.TotalPrice += (item.Count * item.Product.Price);
+                ShoppingCartVM.OrderHeader.TotalPrice += (item.Count * int.Parse(item.Product.Price));
             }
-
+            //fill order header
             _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
             _unitOfWork.Complete();
-
+            //fill order details
             foreach (var item in ShoppingCartVM.CartsList)
             {
                 OrderDetail orderDetail = new OrderDetail()
                 {
                     ProductId = item.ProductId,
                     OrderHeaderId = ShoppingCartVM.OrderHeader.Id,
-                    Price = item.Product.Price,
+                    Price = int.Parse(item.Product.Price),
                     Count = item.Count
                 };
 
@@ -147,7 +147,8 @@ namespace E_Commerce.Areas.Customer.Controllers
                 _unitOfWork.Complete();
             }
 
-            var domain = "https://localhost:7020/";
+            //api stripe confg.
+            var domain = "https://localhost:7156/";
             var options = new SessionCreateOptions
             {
                 LineItems = new List<SessionLineItemOptions>(),
@@ -163,7 +164,8 @@ namespace E_Commerce.Areas.Customer.Controllers
                 {
                     PriceData = new SessionLineItemPriceDataOptions
                     {
-                        UnitAmount = (long)(item.Product.Price * 100),
+                        //CHECK HERE ERRORRR
+                        UnitAmount = (long)int.Parse(item.Product.Price) *( 100),
                         Currency = "usd",
                         ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
