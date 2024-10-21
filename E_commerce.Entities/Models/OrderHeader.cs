@@ -16,6 +16,7 @@ namespace E_commerce.Entities.Models
 
 		[ValidateNever]
 		public ApplicationUser ApplicationUser { get; set; }
+		public int TotalCarts { get; set; }
 
 		public DateTime OrderDate { get; set; }
 		public DateTime ShippingDate { get; set; }

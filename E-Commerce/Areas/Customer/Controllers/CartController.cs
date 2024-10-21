@@ -23,25 +23,25 @@ namespace E_Commerce.Areas.Customer.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-        public IActionResult Index()
-        {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
-            ShoppingCartVM = new ShoppingCartVM()
-            {
-                //Get list of carts of corrent user who is logged right now
-                 CartsList = _unitOfWork.ShoppingCart.GetAll(u=>u.ApplicationUserId == claim.Value , Includeword : "Product")
+		public IActionResult Index()
+		{
+			var claimsIdentity = (ClaimsIdentity)User.Identity;
+			var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
-            };
-            foreach (var item in ShoppingCartVM.CartsList)
-            {
-				ShoppingCartVM.TotalCarts += (item.Count * int.Parse(item.Product.Price));
+			ShoppingCartVM = new ShoppingCartVM()
+			{
+				CartsList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value, Includeword: "Product"),
+				OrderHeader = new()
 
+			};
 
-            }
+			foreach (var item in ShoppingCartVM.CartsList)
+			{
+				ShoppingCartVM.OrderHeader.TotalPrice += (item.Count * int.Parse(item.Product.Price));
+			}
 
-            return View(ShoppingCartVM );
-        }
+			return View(ShoppingCartVM);
+		}
 
 		//The plus count affect database (shoppingcart table)
 		public IActionResult Plus(int cartid)
@@ -164,8 +164,8 @@ namespace E_Commerce.Areas.Customer.Controllers
                 {
                     PriceData = new SessionLineItemPriceDataOptions
                     {
-                        //CHECK HERE ERRORRR
-                        UnitAmount = (long)int.Parse(item.Product.Price) *( 100),
+                        //CHECK HERE ERRORRR regarding decimal and int
+                        UnitAmount = (long)(int.Parse(item.Product.Price ))*(100),
                         Currency = "usd",
                         ProductData = new SessionLineItemPriceDataProductDataOptions
                         {
@@ -181,7 +181,8 @@ namespace E_Commerce.Areas.Customer.Controllers
             var service = new SessionService();
             Session session = service.Create(options);
             ShoppingCartVM.OrderHeader.SessionId = session.Id;
-
+            //?? possible error
+            ShoppingCartVM.OrderHeader.PaymentIntentId = session.PaymentIntentId;    
             _unitOfWork.Complete();
 
             Response.Headers.Add("Location", session.Url);
@@ -205,8 +206,10 @@ namespace E_Commerce.Areas.Customer.Controllers
                 orderHeader.PaymentIntentId = session.PaymentIntentId;
                 _unitOfWork.Complete();
             }
+            
             List<ShoppingCart> shoppingcarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
-            HttpContext.Session.Clear();
+            //possible error
+            //HttpContext.Session.Clear();
             _unitOfWork.ShoppingCart.RemoveRange(shoppingcarts);
             _unitOfWork.Complete();
             return View(id);

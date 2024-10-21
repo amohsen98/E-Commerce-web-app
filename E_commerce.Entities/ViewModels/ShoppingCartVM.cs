@@ -11,7 +11,6 @@ namespace E_commerce.Entities.ViewModels
     public class ShoppingCartVM
     {
         public IEnumerable<ShoppingCart> CartsList { get; set; }
-        public int TotalCarts { get; set; }
         public OrderHeader OrderHeader { get; set; }
 
     }

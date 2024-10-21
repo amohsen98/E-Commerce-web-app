@@ -39,8 +39,7 @@
 								<div class="col-4 text-md-right pt-4">
 									<h6>
 										<strong>
- 											COULD BE ERROR
- 											@item.Product.Price
+											@item.Product.Price
 											<span class="text-muted">&nbsp;x&nbsp;</span>@item.Count
 										</strong>
 									</h6>
@@ -70,7 +69,7 @@
 							<ul class="list-group">
 								<li class="list-group-item d-flex justify-content-between bg-light">
 									<span class="text-dark"> Total (USD)</span>
-									<strong class="text-dark">@Model.OrderHeader.TotalPrice.ToString("c")</strong>
+									<strong class="text-dark">@Model.OrderHeader.TotalPrice</strong>
 								</li>
 							</ul>
 						</div>
