@@ -182,7 +182,6 @@ namespace E_Commerce.Areas.Customer.Controllers
             Session session = service.Create(options);
             ShoppingCartVM.OrderHeader.SessionId = session.Id;
             //?? possible error
-            ShoppingCartVM.OrderHeader.PaymentIntentId = session.PaymentIntentId;    
             _unitOfWork.Complete();
 
             Response.Headers.Add("Location", session.Url);
@@ -194,26 +193,24 @@ namespace E_Commerce.Areas.Customer.Controllers
 
         }
 
-        public IActionResult OrderConfirmation(int id)
-        {
-            OrderHeader orderHeader = _unitOfWork.OrderHeader.GetFirstorDefault(u => u.Id == id);
-            var service = new SessionService();
-            Session session = service.Get(orderHeader.SessionId);
+		public IActionResult OrderConfirmation(int id)
+		{
+			OrderHeader orderHeader = _unitOfWork.OrderHeader.GetFirstorDefault(u => u.Id == id);
+			var service = new SessionService();
+			Session session = service.Get(orderHeader.SessionId);
 
-            if (session.PaymentStatus.ToLower() == "paid")
-            {
-                _unitOfWork.OrderHeader.UpdateStatus(id, SD.Approve, SD.Approve);
-                orderHeader.PaymentIntentId = session.PaymentIntentId;
-                _unitOfWork.Complete();
-            }
-            
-            List<ShoppingCart> shoppingcarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
-            //possible error
-            //HttpContext.Session.Clear();
-            _unitOfWork.ShoppingCart.RemoveRange(shoppingcarts);
-            _unitOfWork.Complete();
-            return View(id);
-        }
+			if (session.PaymentStatus.ToLower() == "paid")
+			{
+				_unitOfWork.OrderHeader.UpdateStatus(id, SD.Approve, SD.Approve);
+				orderHeader.PaymentIntentId = session.PaymentIntentId;
+				_unitOfWork.Complete();
+			}
+			List<ShoppingCart> shoppingcarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+			//HttpContext.Session.Clear();
+			_unitOfWork.ShoppingCart.RemoveRange(shoppingcarts);
+			_unitOfWork.Complete();
+			return View(id);
+		}
 
-    }
+	}
 }

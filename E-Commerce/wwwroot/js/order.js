@@ -12,7 +12,7 @@ function loaddata() {
         },
         "columns": [
             { "data": "id" },
-            { "data": "Name" },
+            { "data": "name" },
             { "data": "phoneNumber" },
             { "data": "applicationUser.email" },
             { "data": "orderStatus" },
