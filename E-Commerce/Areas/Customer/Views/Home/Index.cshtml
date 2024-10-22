@@ -1,6 +1,6 @@
-﻿@using E_commerce.Entities;
-@model IEnumerable<Product>
-
+﻿@model IEnumerable<Product>
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
 
 <section class="py-5">
     <div class="container px-4 px-lg-5 mt-5">
@@ -24,7 +24,7 @@
                         <!-- Product actions-->
                         <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                             <div class="text-center">
-                                <a  class="btn btn-outline-dark mt-auto" href="#" >View Details</a>
+                                <a asp-action="Details" asp-route-ProductId="@item.Id" class="btn btn-outline-dark mt-auto">View Details</a>
                             </div>
                         </div>
                     </div>
@@ -34,7 +34,17 @@
         </div>
 
 
-        
+        <div class="container px-4 px-lg-5 mt-5">
+            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+
+                @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page = page }),
+                         new PagedListRenderOptions
+                {
+                    LiElementClasses = new string[] { "page-item" },
+                    PageClasses = new string[] { "page-link" }
+                })
+            </div>
+        </div>
 
 
     </div>

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Security.Claims;
+using X.PagedList.Extensions;
 
 
 namespace E_Commerce.Areas.Customer.Controllers
@@ -23,10 +24,14 @@ namespace E_Commerce.Areas.Customer.Controllers
         {
             _unitofwork = unitofwork;
         }
-        public IActionResult Index()
-        {
+        public IActionResult Index(int ? page)
 
-            var products = _unitofwork.Product.GetAll();
+
+        {
+            var PageNumber = page ?? 1;
+            int PageSize = 6;
+
+            var products = _unitofwork.Product.GetAll().ToPagedList(PageNumber , PageSize);
             return View(products);
             
         }
