@@ -1,3 +1,4 @@
+using E_commerce.DataAccess.DbInitializer;
 using E_commerce.DataAccess.Implementation;
 using E_commerce.Entities.Repositories;
 using E_commerce.Entities.Utility;
@@ -32,6 +33,7 @@ namespace E_Commerce
             .EnableSensitiveDataLogging() // Enable this for SQL logging
            .LogTo(Console.WriteLine)); // This will log SQL to the console
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
             builder.Services.Configure<StripeData>(builder.Configuration.GetSection("stripe"));
 
@@ -42,8 +44,9 @@ namespace E_Commerce
                 .AddDefaultTokenProviders().AddDefaultUI()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession();
 
-             
             builder.Services.AddSingleton<IEmailSender, EmailSender>();
 
             builder.Services.AddDistributedMemoryCache();
@@ -63,32 +66,41 @@ namespace E_Commerce
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseRouting();
 
             StripeConfiguration.ApiKey = builder.Configuration.GetSection("stripe:Secretkey").Get<string>();
-
+            app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
 
-            //app.UseSession();
+            app.UseSession();
+            SeedDb();
+
             app.MapRazorPages();
 
             //app.MapControllerRoute(
             //  name: "default",
             //pattern: "{controller=Home}/{action=Index}/{id?}");
 
-           
+
 
             app.MapControllerRoute(
-                  name: "default",
-                  pattern: "{Area=Admin}/{controller=Home}/{action=Index}/{id?}" );
-            app.MapControllerRoute(
-                 name: "Customer",
-                 pattern: "{Area=Customer}/{controller=Home}/{action=Index}/{id?}");
+     name: "default",
+     pattern: "{Area=Customer}/{controller=Home}/{action=Index}/{id?}");
+            
            
     
 
             app.Run();
+
+            void SeedDb()
+            {
+
+                using (var scope = app.Services.CreateScope())
+                {
+                    var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+                    dbInitializer.Initialize();
+                }
+            }
         }
     }
 }
