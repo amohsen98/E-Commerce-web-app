@@ -44,7 +44,10 @@ namespace E_Commerce
 
 
              
-            builder.Services.AddSingleton<IEmailSender, EmailSender>(); 
+            builder.Services.AddSingleton<IEmailSender, EmailSender>();
+
+            builder.Services.AddDistributedMemoryCache();
+            //builder.Services.AddSession();
             
 
             var app = builder.Build();
@@ -64,10 +67,10 @@ namespace E_Commerce
 
             StripeConfiguration.ApiKey = builder.Configuration.GetSection("stripe:Secretkey").Get<string>();
 
-
+            app.UseAuthentication();
             app.UseAuthorization();
-            app.UseAuthorization();
 
+            //app.UseSession();
             app.MapRazorPages();
 
             //app.MapControllerRoute(

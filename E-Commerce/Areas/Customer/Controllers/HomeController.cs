@@ -62,7 +62,11 @@ namespace E_Commerce.Areas.Customer.Controllers
             if (Cartobj == null)
             {
                 _unitofwork.ShoppingCart.Add(shoppingCart);
+
                 _unitofwork.Complete();
+                //HttpContext.Session.SetInt32(SD.SessionKey,
+                //    _unitofwork.ShoppingCart.GetAll(x => x.ApplicationUserId == claim.Value).ToList().Count()
+                //   );
 
             }
             else

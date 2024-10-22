@@ -9,9 +9,13 @@
     }
 }
 
-<h1>Manage your account</h1>
 
-<div>
+
+<div class="container">
+
+    <br />
+    <h4>Manage your account</h4>
+
     <h2>Change your account settings</h2>
     <hr />
     <div class="row">
@@ -20,6 +24,7 @@
         </div>
         <div class="col-md-9">
             @RenderBody()
+            <br />
         </div>
     </div>
 </div>
@@ -27,3 +32,4 @@
 @section Scripts {
     @RenderSection("Scripts", required: false)
 }
+

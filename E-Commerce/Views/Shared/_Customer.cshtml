@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -25,25 +26,37 @@
 
                     @if(User.Identity.IsAuthenticated)
                     {
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">My Setting</a>
+                        @if(User.IsInRole("Admin")){
 
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#!">My Orders</a></li>
-                            <li><hr class="dropdown-divider" /></li>
-                            <li><a class="dropdown-item" href="#!">Edit Profile</a></li>
-                        </ul>
-                    </li>
+                            <li class="nav-item"><a class="nav-link active" href="/Admin/Dashboard/Index">Dashboard</a></li>
+
+
+                        }
+                        else {
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">My Setting</a>
+
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="/Customer/Cart/Index">My Orders</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><a class="dropdown-item" href="/Identity/Account/Manage">Edit Profile</a></li>
+                                </ul>
+                            </li>
+                        }
+                    
                     }
                 </ul>
                 <partial name="_LoginPartial" />
-                <form class="d-flex">
-                    <a  href="/Customer/Cart/Index"class="btn btn-outline-dark" >
-                        <i class="bi-cart-fill me-1"></i>
-                        Cart
-                        <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
-                    </a>
-                </form>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <form class="d-flex">
+                        <a  href="/Customer/Cart/Index"class="btn btn-outline-dark" >
+                            <i class="bi-cart-fill me-1"></i>
+                            Cart 
+             </a>
+                    </form>
+                }
             </div>
         </div>
     </nav>
